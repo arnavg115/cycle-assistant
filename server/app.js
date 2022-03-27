@@ -5,25 +5,17 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
-app.get("/", (req, res) => {
-  res
-    .send(
-      `<script src="/socket.io/socket.io.js"></script>
-  <script>
-    var socket = io();
-  </script>`
-    )
-    .type("html");
+app.use(express.static("public"));
+
+const lats = [];
+app.get("/users", (req, res) => {
+  console.log(lats);
+  res.send(lats);
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
-  setTimeout(() => socket.emit("my_message", { gello: "sello" }), 5000);
-  socket.on("my response", (daa) => {
-    console.log(daa);
-  });
-  socket.on("button_pressed", (data) => {
-    console.log(data);
+  socket.on("gps", (lat) => {
+    lats.push(lat);
   });
 });
 
